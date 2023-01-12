@@ -7,12 +7,11 @@ app.get('/', (req, res) => {
     res.send('Hello World!')
 }
 );
-
-// app.get('/set', async (req, res) => {
-//     await redisHandler.setData('test', 'test');
-//     res.send('Data set');
-// }
-// );
+ app.get('/set', async (req, res) => {
+     await redisHandler.setData('test_suraj_bhai_the_legend', 'test');
+     res.send('Data set');
+ }
+ );
 
 app.get('/get-tag-wise-images-ques', async (req, res) => {
     const tags = ['game_parent_child_tag_group_1','game_parent_child_tag_group_2','game_parent_child_tag_group_3','game_parent_child_tag_group_4','game_parent_child_tag_group_5'];
