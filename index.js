@@ -142,10 +142,41 @@ app.get('/remove-imageless-tags', async (req, res) => {
     res.send({data: imagesLessTags});
 });
 
+
+
+app.get('/parent-tag-question', async (req, res) => {
+    const tags = ['game_parent_child_tag_group_1','game_parent_child_tag_group_2','game_parent_child_tag_group_3','game_parent_child_tag_group_4','game_parent_child_tag_group_5'];
+    
+    finalData = {}
+    for(let i=0; i<tags.length; i++) {
+        let data = await redisHandler.getData(tags[i]);
+        data = JSON.parse(data);
+        let count = 0;
+        for(j=0; j<data.length; j++) {
+            let q3 = await redisHandler.getData(`game_tag_questions_${data[j]}_3`);
+            let q2 = await redisHandler.getData(`game_tag_questions_${data[j]}_2`);
+            let q1 = await redisHandler.getData(`game_tag_questions_${data[j]}_1`);
+
+            q3 = JSON.parse(q3);
+            q2 = JSON.parse(q2);
+            q1 = JSON.parse(q1);
+
+            count += (q3?.length || 0) + (q2?.length || 0) + (q1?.length || 0);
+        }
+        finalData[tags[i]] = count;
+    }
+    res.send({finalData});
+});
+
+
+
 // subtracting array from array
 function array_diff(a, b) {
     return a.filter(function(i) {return b.indexOf(i) < 0;});
 }
+
+
+
 
 
 app.listen(port, () => {
