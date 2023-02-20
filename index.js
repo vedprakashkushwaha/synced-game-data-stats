@@ -169,6 +169,55 @@ app.get('/parent-tag-question', async (req, res) => {
 });
 
 
+app.get('/total-synced-questions', async (req, res) => {
+    const tags = ['game_parent_child_tag_group_1','game_parent_child_tag_group_2','game_parent_child_tag_group_3','game_parent_child_tag_group_4','game_parent_child_tag_group_5'];
+    
+    finalData = {}
+    qSet = new Set();
+    for(let i=0; i<tags.length; i++) {
+        let data = await redisHandler.getData(tags[i]);
+        data = JSON.parse(data);
+        let count = 0;
+        for(j=0; j<data.length; j++) {
+            let q3 = await redisHandler.getData(`game_tag_questions_${data[j]}_3`);
+            let q2 = await redisHandler.getData(`game_tag_questions_${data[j]}_2`);
+            let q1 = await redisHandler.getData(`game_tag_questions_${data[j]}_1`);
+
+            q3 = JSON.parse(q3);
+            q2 = JSON.parse(q2);
+            q1 = JSON.parse(q1);
+
+            q3 = q3?.length ? q3 : [];
+            q2 = q2?.length ? q2 : [];
+            q1 = q1?.length ? q1 : [];
+
+            qSet = new Set([...qSet, ...q3, ...q2, ...q1])
+        }
+    }
+    res.send({finalData: qSet.size});
+});
+
+
+
+app.get('/total-synced-images', async (req, res) => {
+    const tags = ['game_parent_child_tag_group_1','game_parent_child_tag_group_2','game_parent_child_tag_group_3','game_parent_child_tag_group_4','game_parent_child_tag_group_5'];
+    
+    finalData = {}
+    qSet = new Set();
+    for(let i=0; i<tags.length; i++) {
+        let data = await redisHandler.getData(tags[i]);
+        data = JSON.parse(data);
+        let count = 0;
+        for(j=0; j<data.length; j++) {
+            let q3 = await redisHandler.getData(`game_tag_images_${data[j]}`);
+            q3 = JSON.parse(q3);
+            q3 = q3?.length ? q3 : [];
+            qSet = new Set([...qSet, ...q3])
+        }
+    }
+    res.send({finalData: qSet.size});
+});
+
 
 // subtracting array from array
 function array_diff(a, b) {
